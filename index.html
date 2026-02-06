@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hafsa... Will you be my Valentine? 💖</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💖</text></svg>">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <div class="loading-text">Preparing something special...</div>
+        <div class="loading-hearts">
+            <span>💖</span>
+            <span>💕</span>
+            <span>💗</span>
+        </div>
+    </div>
+
+    <!-- Canvas for Confetti -->
+    <canvas id="confetti-canvas"></canvas>
+
+    <!-- Simplified Floating Hearts Background -->
+    <div class="hearts-container">
+        <div class="heart"></div>
+        <div class="heart"></div>
+        <div class="heart"></div>
+        <div class="heart"></div>
+        <div class="heart"></div>
+    </div>
+
+    <!-- Proposal Page -->
+    <div id="proposal-page" class="page active">
+        <div class="content-wrapper">
+            <h1 class="main-title">Hafsa</h1>
+            <h2 class="question">Will you be my Valentine?</h2>
+            <div class="emoji-heart">💖</div>
+            <div class="button-container">
+                <button id="yes-btn" class="btn yes-btn">Yes! 💕</button>
+                <button id="no-btn" class="btn no-btn">No</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Date Plan Reveal Page - THE ROSE -->
+    <div id="plan-page" class="page">
+        <div class="content-wrapper">
+            <h1 class="celebration-title">Yay! 🎉</h1>
+            <p class="celebration-subtitle">Click on the petals to reveal our plans 🌹</p>
+            
+            <!-- Click Counter -->
+            <div id="click-counter" class="click-counter">
+                <span id="counter-text">0/4</span>
+            </div>
+            
+            <!-- Revealed Plans Display Area -->
+            <div id="revealed-plans" class="revealed-plans-container"></div>
+            
+            <!-- 3D Rose Canvas Container -->
+            <div class="rose-3d-container">
+                <canvas id="rose-canvas"></canvas>
+            </div>
+
+            <!-- Audio for speech (hidden until played) -->
+            <div id="audio-container" class="audio-container" style="display: none;">
+                <audio id="speech-audio" controls autoplay preload="metadata">
+                    <source src="speech.m4a" type="audio/mp4">
+                    <source src="speech.m4a" type="audio/x-m4a">
+                    Your browser does not support the audio element.
+                </audio>
+            </div>
+
+            <div class="final-message">
+                <p>Can't wait to spend this special day with you! ❤️</p>
+                <p style="font-size: 1.1rem; margin-top: 0.5rem; font-family: 'Poppins', sans-serif; color: #ff69b4; font-weight: 500;">
+                    You make every moment magical ✨
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script async src="https://ga.jspm.io/npm:es-module-shims@1.6.3/dist/es-module-shims.js" crossorigin="anonymous"></script>
+    <script type="importmap">
+    {
+        "imports": {      
+            "three": "https://unpkg.com/three@0.150.1/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.150.1/examples/jsm/"
+        }
+    }
+    </script>
+    <script src="confetti.js"></script>
+    <script type="module" src="rose3d.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

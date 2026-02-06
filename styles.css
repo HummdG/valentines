@@ -1,0 +1,880 @@
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@300;400;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #ffeef8 0%, #ffc9e3 50%, #ffb3d9 100%);
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* Canvas for confetti only */
+#confetti-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+}
+
+/* Loading Screen */
+#loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #ffc9e3 0%, #da70d6 50%, #87ceeb 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+#loading-screen.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.loading-text {
+    font-family: 'Pacifico', cursive;
+    font-size: 2rem;
+    color: white;
+    margin-bottom: 2rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.loading-hearts {
+    display: flex;
+    gap: 1rem;
+}
+
+.loading-hearts span {
+    font-size: 2rem;
+    animation: simpleFloat 1s ease-in-out infinite;
+}
+
+.loading-hearts span:nth-child(2) { animation-delay: 0.2s; }
+.loading-hearts span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes simpleFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+/* Simplified Floating Hearts */
+.hearts-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.heart {
+    position: absolute;
+    font-size: 20px;
+    animation: gentleFloat 20s infinite ease-in-out;
+    opacity: 0.6;
+}
+
+.heart::before {
+    content: '❤️';
+}
+
+.heart:nth-child(1) { left: 15%; animation-delay: 0s; }
+.heart:nth-child(2) { left: 40%; animation-delay: 4s; }
+.heart:nth-child(3) { left: 70%; animation-delay: 8s; }
+.heart:nth-child(4) { left: 85%; animation-delay: 12s; }
+.heart:nth-child(5) { left: 25%; animation-delay: 16s; }
+
+@keyframes gentleFloat {
+    0% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0;
+    }
+    10% { opacity: 0.6; }
+    90% { opacity: 0.6; }
+    100% {
+        transform: translateY(-100px) rotate(180deg);
+        opacity: 0;
+    }
+}
+
+/* Page Structure */
+.page {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+    z-index: 10;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 1rem 0;
+}
+
+.page.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.content-wrapper {
+    text-align: center;
+    padding: 1rem;
+    max-width: 1000px;
+    width: 90%;
+    margin: auto;
+}
+
+/* Proposal Page Styles */
+.main-title {
+    font-family: 'Pacifico', cursive;
+    font-size: 4.5rem;
+    color: #ff1493;
+    margin-bottom: 1rem;
+    text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.1);
+    animation: gentlePulse 3s infinite;
+}
+
+@keyframes gentlePulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+@keyframes urgentPulse {
+    0%, 100% { 
+        transform: scale(1); 
+        opacity: 1;
+    }
+    50% { 
+        transform: scale(1.15); 
+        opacity: 0.9;
+    }
+}
+
+.question {
+    font-family: 'Poppins', sans-serif;
+    font-size: 2rem;
+    color: #ff69b4;
+    margin-bottom: 2rem;
+    font-weight: 600;
+}
+
+.emoji-heart {
+    font-size: 5rem;
+    margin: 2rem 0;
+    animation: heartbeat 1.5s infinite;
+}
+
+@keyframes heartbeat {
+    0%, 100% { transform: scale(1); }
+    10%, 30% { transform: scale(0.9); }
+    20%, 40% { transform: scale(1.1); }
+}
+
+.button-container {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    align-items: center;
+    margin-top: 3rem;
+}
+
+.btn {
+    padding: 1.5rem 3.5rem;
+    font-size: 1.8rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Poppins', sans-serif;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.yes-btn {
+    background: linear-gradient(135deg, #ff6b9d 0%, #c06c84 100%);
+    color: white;
+}
+
+.yes-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 12px 35px rgba(255, 107, 157, 0.4);
+}
+
+.no-btn {
+    background: linear-gradient(135deg, #e0e0e0 0%, #bdbdbd 100%);
+    color: #666;
+    transition: all 0.3s ease;
+}
+
+.no-btn:hover {
+    transform: scale(1.05);
+}
+
+.no-btn.shrinking {
+    transform: scale(0.9);
+    opacity: 0.7;
+}
+
+/* Rose Container */
+.rose-container {
+    position: relative;
+    width: 100%;
+    max-width: 700px;
+    height: 650px;
+    margin: 2rem auto;
+}
+
+/* 3D Rose Canvas Container */
+.rose-3d-container {
+    position: relative;
+    width: 100%;
+    max-width: 550px;
+    height: 380px;
+    margin: 0.8rem auto;
+    min-height: 350px;
+}
+
+#rose-canvas {
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+    background: transparent;
+}
+
+/* Click Counter */
+.click-counter {
+    background: linear-gradient(135deg, #ff69b4, #ff1493);
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 700;
+    padding: 0.6rem 1.5rem;
+    border-radius: 50px;
+    display: inline-block;
+    margin: 0.5rem auto;
+    box-shadow: 0 6px 15px rgba(255, 20, 147, 0.4);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.5s ease;
+}
+
+/* Audio Container */
+.audio-container {
+    margin: 2rem auto;
+    max-width: 600px;
+    padding: 2rem;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 240, 245, 0.95));
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(255, 105, 180, 0.3);
+    animation: fadeIn 0.8s ease;
+    text-align: center;
+}
+
+.audio-container audio {
+    width: 100%;
+    margin-top: 1rem;
+}
+
+.audio-container::before {
+    content: "🎵 Special Message 💕";
+    display: block;
+    font-family: 'Pacifico', cursive;
+    font-size: 1.5rem;
+    color: #ff1493;
+    margin-bottom: 1rem;
+}
+
+/* Revealed Plans Display Area */
+.revealed-plans-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    justify-content: center;
+    margin: 0.8rem auto;
+    max-width: 1000px;
+    min-height: 20px;
+}
+
+.plan-card {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 240, 245, 0.95));
+    border-radius: 12px;
+    padding: 0.8rem 1.2rem;
+    box-shadow: 0 6px 15px rgba(255, 105, 180, 0.3);
+    border: 2px solid rgba(255, 182, 193, 0.5);
+    transform: translateY(-20px);
+    opacity: 0;
+    transition: all 0.5s ease;
+    min-width: 180px;
+    max-width: 280px;
+    flex: 1;
+}
+
+.plan-card.visible {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.plan-emoji {
+    font-size: 2rem;
+    flex-shrink: 0;
+    animation: gentlePulse 2s infinite;
+}
+
+.plan-content {
+    flex: 1;
+    text-align: left;
+}
+
+.plan-time {
+    background: linear-gradient(135deg, #ff69b4, #ff1493);
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    display: inline-block;
+    margin-bottom: 0.25rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.plan-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #ff1493;
+    margin-bottom: 0.15rem;
+    font-family: 'Pacifico', cursive;
+}
+
+.plan-info {
+    font-size: 0.8rem;
+    color: #ff69b4;
+    margin-bottom: 0.1rem;
+    font-weight: 500;
+}
+
+.plan-detail {
+    font-size: 0.7rem;
+    color: #c2185b;
+    font-style: italic;
+}
+
+
+/* Rose Center */
+.rose-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100px;
+    height: 100px;
+    background: radial-gradient(circle, #ffd700, #ffb347);
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4);
+    z-index: 20;
+    animation: centerBloom 0.6s ease-out forwards;
+    opacity: 0;
+}
+
+@keyframes centerBloom {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0);
+    }
+    50% {
+        opacity: 0.8;
+        transform: translate(-50%, -50%) scale(1.1);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+.rose-center-emoji {
+    font-size: 2.5rem;
+    animation: gentlePulse 2s infinite;
+}
+
+.rose-center-text {
+    font-family: 'Pacifico', cursive;
+    font-size: 0.85rem;
+    color: #fff;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    margin-top: 0.2rem;
+}
+
+/* Realistic Rose Petal Shape */
+.rose-petal {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem 1.2rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    animation: petalBloom 0.8s ease-out forwards;
+    opacity: 0;
+    cursor: pointer;
+}
+
+@keyframes petalBloom {
+    from {
+        opacity: 0;
+        transform: scale(0.3) rotate(-15deg);
+    }
+    60% {
+        opacity: 0.8;
+        transform: scale(1.05) rotate(2deg);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+.rose-petal:hover {
+    transform: scale(1.05) translateY(-5px) !important;
+}
+
+/* Content Petals - Larger with realistic shape */
+.rose-petal.content-petal {
+    width: 220px;
+    height: 280px;
+    clip-path: path('M 110,10 C 140,10 180,30 190,60 C 200,90 190,140 180,180 C 170,220 140,270 110,280 C 80,270 50,220 40,180 C 30,140 20,90 30,60 C 40,30 80,10 110,10 Z');
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3), inset 0 -20px 40px rgba(0, 0, 0, 0.1);
+}
+
+/* Decorative Petals - Smaller, simpler */
+.rose-petal.decorative-petal {
+    width: 160px;
+    height: 200px;
+    clip-path: path('M 80,8 C 100,8 130,20 138,45 C 145,70 138,110 130,140 C 122,170 100,195 80,200 C 60,195 38,170 30,140 C 22,110 15,70 22,45 C 30,20 60,8 80,8 Z');
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25), inset 0 -15px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* Inner Petals - Smallest */
+.rose-petal.inner-petal {
+    width: 120px;
+    height: 150px;
+    clip-path: path('M 60,6 C 75,6 95,15 100,32 C 105,50 100,80 95,105 C 90,130 75,145 60,150 C 45,145 30,130 25,105 C 20,80 15,50 20,32 C 25,15 45,6 60,6 Z');
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2), inset 0 -10px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Petal Colors with depth gradients - Pink to Deep Red Gradient */
+/* Outer Content Petals - Lightest Pink */
+.petal-1 {
+    background: linear-gradient(165deg, #ffb3d9 0%, #ff8fb3 40%, #ff6b9d 100%);
+    z-index: 15;
+}
+
+.petal-2 {
+    background: linear-gradient(165deg, #ffc0e0 0%, #ffa5c0 40%, #ff7aa8 100%);
+    z-index: 14;
+}
+
+.petal-3 {
+    background: linear-gradient(165deg, #ffcce5 0%, #ffb3d0 40%, #ff8ba7 100%);
+    z-index: 13;
+}
+
+/* Middle Decorative Petals - Rose Pink to Rose Red Transition */
+.decorative-1 {
+    background: linear-gradient(165deg, #ff8fb3 0%, #ff6b9d 40%, #e91e63 100%);
+    z-index: 12;
+}
+
+.decorative-2 {
+    background: linear-gradient(165deg, #ff99b8 0%, #ff7aa8 40%, #f73378 100%);
+    z-index: 11;
+}
+
+.decorative-3 {
+    background: linear-gradient(165deg, #ffa5c0 0%, #ff8ba7 40%, #ff4d88 100%);
+    z-index: 10;
+}
+
+.decorative-4 {
+    background: linear-gradient(165deg, #ff85aa 0%, #ff70a0 40%, #e91e63 100%);
+    z-index: 9;
+}
+
+.decorative-5 {
+    background: linear-gradient(165deg, #ff91b4 0%, #ff6b9d 40%, #e6005c 100%);
+    z-index: 8;
+}
+
+.decorative-6 {
+    background: linear-gradient(165deg, #ff9ab8 0%, #ff7aa8 40%, #f0316b 100%);
+    z-index: 7;
+}
+
+/* Inner Petals - Deep Red/Crimson */
+.inner-1 {
+    background: linear-gradient(165deg, #ff5d8f 0%, #e91e63 40%, #c2185b 100%);
+    z-index: 19;
+}
+
+.inner-2 {
+    background: linear-gradient(165deg, #ff6b9d 0%, #f73378 40%, #d81b60 100%);
+    z-index: 18;
+}
+
+/* Content Petal Positioning - Main 3 activities in outer spiral */
+.petal-top {
+    top: -80px;
+    left: 50%;
+    margin-left: -110px;
+    transform: rotate(-5deg);
+    animation-delay: 1.4s;
+}
+
+.petal-bottom-left {
+    bottom: -30px;
+    left: 8%;
+    transform: rotate(-38deg);
+    animation-delay: 1.6s;
+}
+
+.petal-bottom-right {
+    bottom: -30px;
+    right: 8%;
+    transform: rotate(38deg);
+    animation-delay: 1.6s;
+}
+
+/* Decorative Petal Positioning - Tighter Spiral Arrangement */
+.petal-top-left {
+    top: 8%;
+    left: 18%;
+    transform: rotate(-30deg);
+    animation-delay: 1.0s;
+}
+
+.petal-mid-left {
+    top: 38%;
+    left: -5px;
+    transform: rotate(-70deg);
+    animation-delay: 1.2s;
+}
+
+.petal-mid-right {
+    top: 38%;
+    right: -5px;
+    transform: rotate(70deg);
+    animation-delay: 1.2s;
+}
+
+.petal-top-right {
+    top: 8%;
+    right: 18%;
+    transform: rotate(30deg);
+    animation-delay: 1.0s;
+}
+
+.petal-bottom-mid-left {
+    bottom: 12%;
+    left: 22%;
+    transform: rotate(-55deg);
+    animation-delay: 1.3s;
+}
+
+.petal-bottom-mid-right {
+    bottom: 12%;
+    right: 22%;
+    transform: rotate(55deg);
+    animation-delay: 1.3s;
+}
+
+/* Inner Petal Positioning - Tight to Center */
+.petal-inner-left {
+    top: 44%;
+    left: 36%;
+    transform: rotate(-20deg);
+    animation-delay: 0.6s;
+}
+
+.petal-inner-right {
+    top: 44%;
+    right: 36%;
+    transform: rotate(20deg);
+    animation-delay: 0.6s;
+}
+
+/* Petal Content */
+.petal-emoji {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.petal-time {
+    background: rgba(255, 255, 255, 0.35);
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 0.7rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.petal-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 0.4rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.petal-info {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.95);
+    margin: 0.2rem 0;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.petal-detail {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.85);
+    font-style: italic;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Rose Stem */
+.rose-stem {
+    position: absolute;
+    bottom: -80px;
+    left: 50%;
+    width: 10px;
+    height: 200px;
+    background: linear-gradient(180deg, #228b22, #1a6b1a, #006400);
+    margin-left: -5px;
+    border-radius: 5px;
+    animation: stemGrow 0.6s ease-out 2.0s forwards;
+    transform-origin: top center;
+    transform: scaleY(0);
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes stemGrow {
+    from {
+        transform: scaleY(0);
+    }
+    to {
+        transform: scaleY(1);
+    }
+}
+
+/* Rose Leaves */
+.rose-leaf {
+    position: absolute;
+    width: 50px;
+    height: 70px;
+    background: linear-gradient(135deg, #32cd32, #228b22, #1a6b1a);
+    clip-path: path('M 25,2 C 35,2 45,10 48,22 C 50,35 48,50 42,62 C 35,68 28,70 25,70 C 15,65 8,55 5,42 C 2,28 5,12 12,5 C 16,2 20,2 25,2 Z');
+    animation: leafGrow 0.5s ease-out forwards;
+    opacity: 0;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes leafGrow {
+    from {
+        opacity: 0;
+        transform: scale(0);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.leaf-left {
+    bottom: 60px;
+    left: 50%;
+    margin-left: -55px;
+    transform: rotate(-40deg) scale(0);
+    animation-delay: 2.4s;
+}
+
+.leaf-right {
+    bottom: 90px;
+    left: 50%;
+    margin-left: 18px;
+    transform: rotate(40deg) scale(0);
+    animation-delay: 2.6s;
+}
+
+/* Celebration Title */
+.celebration-title {
+    font-family: 'Pacifico', cursive;
+    font-size: 2.5rem;
+    color: #ff1493;
+    margin-bottom: 0.5rem;
+    animation: celebrationBounce 1s ease;
+}
+
+@keyframes celebrationBounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-20px);
+    }
+    60% {
+        transform: translateY(-10px);
+    }
+}
+
+.celebration-subtitle {
+    font-size: 1rem;
+    color: #ff69b4;
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+/* Final Message */
+.final-message {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 15px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    animation: fadeIn 0.5s ease 2.8s forwards;
+    opacity: 0;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+.final-message p {
+    font-size: 1.1rem;
+    color: #ff1493;
+    font-weight: 600;
+    font-family: 'Pacifico', cursive;
+    margin: 0.3rem 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .main-title {
+        font-size: 3rem;
+    }
+
+    .question {
+        font-size: 1.5rem;
+    }
+
+    .emoji-heart {
+        font-size: 4rem;
+    }
+
+    .btn {
+        padding: 1.2rem 2.5rem;
+        font-size: 1.4rem;
+    }
+
+    .button-container {
+        gap: 1rem;
+    }
+
+    .rose-container {
+        height: 550px;
+        transform: scale(0.8);
+    }
+
+    .rose-3d-container {
+        height: 500px;
+    }
+
+    .celebration-title {
+        font-size: 2.5rem;
+    }
+
+    .celebration-subtitle {
+        font-size: 1.1rem;
+    }
+
+    .plan-card {
+        min-width: 100%;
+        padding: 1.2rem 1.5rem;
+    }
+
+    .plan-emoji {
+        font-size: 2.5rem;
+    }
+
+    .plan-title {
+        font-size: 1.3rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-title {
+        font-size: 2.5rem;
+    }
+
+    .question {
+        font-size: 1.2rem;
+    }
+
+    .btn {
+        padding: 1rem 2rem;
+        font-size: 1.2rem;
+    }
+
+    .rose-container {
+        height: 500px;
+        transform: scale(0.65);
+    }
+
+    .rose-3d-container {
+        height: 450px;
+    }
+
+    .celebration-title {
+        font-size: 2rem;
+    }
+
+    .plan-card {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .plan-content {
+        text-align: center;
+    }
+
+    .plan-emoji {
+        font-size: 2.2rem;
+    }
+}
